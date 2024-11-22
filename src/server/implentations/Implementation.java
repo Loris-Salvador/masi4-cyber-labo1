@@ -1,4 +1,4 @@
 package server.implentations;
 
-public class Implementation {
+public abstract class Implementation {
 }

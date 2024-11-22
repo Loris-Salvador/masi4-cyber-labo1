@@ -1,4 +1,4 @@
 package client.implementations;
 
-public class Implementation {
+public abstract class Implementation {
 }
