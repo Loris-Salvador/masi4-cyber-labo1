@@ -4,7 +4,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import java.util.Base64;
 
-public class TripleDES implements CryptoAlgorithm {
+public class TripleDes implements CryptoAlgorithm {
 
     @Override
     public String encrypt(String message, SecretKey secretKey) {
