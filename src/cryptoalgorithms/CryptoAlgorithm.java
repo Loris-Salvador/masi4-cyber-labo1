@@ -1,4 +1,4 @@
-package CryptoAlgorithms;
+package cryptoalgorithms;
 
 import javax.crypto.SecretKey;
 
