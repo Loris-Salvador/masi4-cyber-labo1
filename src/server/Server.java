@@ -1,6 +1,6 @@
 package server;
 
-import server.implentations.Implementation;
+import client.features.Feature;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -10,12 +10,12 @@ public class Server {
 
     private final int port;
 
-    private final Implementation Implementation;
+    private final Feature feature;
 
-    public Server(int port, Implementation Implementation)
+    public Server(int port, Feature feature)
     {
         this.port = port;
-        this.Implementation = Implementation;
+        this.feature = feature;
     }
 
     public void start() {
@@ -29,12 +29,7 @@ public class Server {
             InputStream input = clientSocket.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-
-
-            String message;
-            while ((message = reader.readLine()) != null) {
-                System.out.println("Message received : " + message);
-            }
+            feature.execute(reader);
 
             reader.close();
             clientSocket.close();
