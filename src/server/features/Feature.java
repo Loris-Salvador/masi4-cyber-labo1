@@ -1,4 +1,9 @@
 package server.features;
 
-public abstract class Feature {
+import java.io.IOException;
+import java.net.Socket;
+
+public interface Feature {
+
+    void execute(Socket clientSocket) throws IOException;
 }

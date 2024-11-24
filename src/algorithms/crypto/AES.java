@@ -5,16 +5,19 @@ import javax.crypto.SecretKey;
 import java.security.SecureRandom;
 import java.util.Base64;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.util.Arrays;
-
 
 
 public class AES implements CryptoAlgorithm {
 
     @Override
-    public String encrypt(String message, SecretKey secretKey) {
+    public String encrypt(String message, String key) {
 
         try {
+            byte[] keyBytes = key.getBytes();
+            SecretKey secretKey = new SecretKeySpec(keyBytes, "DESede");
+
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
             byte[] iv = new byte[16];
@@ -35,9 +38,12 @@ public class AES implements CryptoAlgorithm {
     }
 
     @Override
-    public String decrypt(String message, SecretKey secretKey) {
+    public String decrypt(String message, String key) {
 
         try {
+            byte[] keyBytes = key.getBytes();
+            SecretKey secretKey = new SecretKeySpec(keyBytes, "DESede");
+
             byte[] encryptedMessageWithIv = Base64.getDecoder().decode(message);
             byte[] iv = Arrays.copyOfRange(encryptedMessageWithIv, 0, 16);
             byte[] encryptedBytes = Arrays.copyOfRange(encryptedMessageWithIv, 16, encryptedMessageWithIv.length);

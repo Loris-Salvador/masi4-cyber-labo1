@@ -1,12 +1,12 @@
 package server;
 
-import client.features.Feature;
+import server.features.Feature;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
+public class Server extends Thread {
 
     private final int port;
 
@@ -18,20 +18,16 @@ public class Server {
         this.feature = feature;
     }
 
-    public void start() {
+    public void run() {
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Waiting on port" + port);
+            System.out.println("Waiting on port " + port);
 
             Socket clientSocket = serverSocket.accept();
             System.out.println("Connection established with : " + clientSocket.getInetAddress());
 
-            InputStream input = clientSocket.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            feature.execute(clientSocket);
 
-            feature.execute(reader);
-
-            reader.close();
             clientSocket.close();
         } catch (IOException e) {
             System.err.println("Error server : " + e.getMessage());

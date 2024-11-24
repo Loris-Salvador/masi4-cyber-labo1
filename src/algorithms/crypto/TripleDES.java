@@ -2,14 +2,18 @@ package algorithms.crypto;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
-public class TripleDes implements CryptoAlgorithm {
+public class TripleDES implements CryptoAlgorithm {
 
     @Override
-    public String encrypt(String message, SecretKey secretKey) {
+    public String encrypt(String message, String key) {
 
         try {
+            byte[] keyBytes = key.getBytes();
+            SecretKey secretKey = new SecretKeySpec(keyBytes, "DESede");
+
             Cipher cipher = Cipher.getInstance("DESede/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             byte[] encryptedBytes = cipher.doFinal(message.getBytes());
@@ -22,7 +26,10 @@ public class TripleDes implements CryptoAlgorithm {
     }
 
     @Override
-    public String decrypt(String message, SecretKey secretKey) {
+    public String decrypt(String message, String key) {
+
+        byte[] keyBytes = key.getBytes();
+        SecretKey secretKey = new SecretKeySpec(keyBytes, "DESede");
 
         try {
             Cipher cipher = Cipher.getInstance("DESede/ECB/PKCS5Padding");

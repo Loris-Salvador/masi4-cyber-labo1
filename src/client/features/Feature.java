@@ -1,8 +1,9 @@
 package client.features;
 
-import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.Socket;
 
 public interface Feature {
 
-    void execute(BufferedReader bufferedReader);
+    void execute(Socket serverSocket) throws IOException;
 }
