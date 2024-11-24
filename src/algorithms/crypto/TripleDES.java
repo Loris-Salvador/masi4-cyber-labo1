@@ -8,11 +8,10 @@ import java.util.Base64;
 public class TripleDES implements CryptoAlgorithm {
 
     @Override
-    public String encrypt(String message, String key) {
+    public String encrypt(String message, byte[] key) {
 
         try {
-            byte[] keyBytes = key.getBytes();
-            SecretKey secretKey = new SecretKeySpec(keyBytes, "DESede");
+            SecretKey secretKey = new SecretKeySpec(key, "DESede");
 
             Cipher cipher = Cipher.getInstance("DESede/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -26,10 +25,9 @@ public class TripleDES implements CryptoAlgorithm {
     }
 
     @Override
-    public String decrypt(String message, String key) {
+    public String decrypt(String message, byte[] key) {
 
-        byte[] keyBytes = key.getBytes();
-        SecretKey secretKey = new SecretKeySpec(keyBytes, "DESede");
+        SecretKey secretKey = new SecretKeySpec(key, "DESede");
 
         try {
             Cipher cipher = Cipher.getInstance("DESede/ECB/PKCS5Padding");

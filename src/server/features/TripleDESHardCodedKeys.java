@@ -23,13 +23,12 @@ public class TripleDESHardCodedKeys implements Feature {
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())))
         {
-             String message;
+            String message;
+            message = in.readLine();
 
-             message = in.readLine();
+            String decryptedMessage = cryptoAlgorithm.decrypt(message, key.getBytes());
 
-            String decryptedMessage = cryptoAlgorithm.decrypt(message, key);
-
-            System.out.println(decryptedMessage);
+            System.out.println("Message décrypté : " + decryptedMessage);
 
         } catch (IOException e) {
             System.err.println("Erreur de communication : " + e.getMessage());

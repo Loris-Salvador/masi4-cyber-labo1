@@ -12,11 +12,10 @@ import java.util.Arrays;
 public class AES implements CryptoAlgorithm {
 
     @Override
-    public String encrypt(String message, String key) {
+    public String encrypt(String message, byte[] key) {
 
         try {
-            byte[] keyBytes = key.getBytes();
-            SecretKey secretKey = new SecretKeySpec(keyBytes, "DESede");
+            SecretKey secretKey = new SecretKeySpec(key, "AES");
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
@@ -38,11 +37,10 @@ public class AES implements CryptoAlgorithm {
     }
 
     @Override
-    public String decrypt(String message, String key) {
+    public String decrypt(String message, byte[] key) {
 
         try {
-            byte[] keyBytes = key.getBytes();
-            SecretKey secretKey = new SecretKeySpec(keyBytes, "DESede");
+            SecretKey secretKey = new SecretKeySpec(key, "AES");
 
             byte[] encryptedMessageWithIv = Base64.getDecoder().decode(message);
             byte[] iv = Arrays.copyOfRange(encryptedMessageWithIv, 0, 16);

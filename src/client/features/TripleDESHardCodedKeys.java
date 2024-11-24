@@ -11,7 +11,7 @@ public class TripleDESHardCodedKeys implements Feature {
 
     private final String key = "123456789012345678901234";
 
-    private final String message = "Hello World!";
+    private final String message = "Hello DES Hard Coded Keys :)";
 
     private final CryptoAlgorithm cryptoAlgorithm;
 
@@ -25,8 +25,10 @@ public class TripleDESHardCodedKeys implements Feature {
 
         PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true);
 
-        String encryptedMessage = cryptoAlgorithm.encrypt(message, key);
+        String encryptedMessage = cryptoAlgorithm.encrypt(message, key.getBytes());
 
         out.println(encryptedMessage);
+
+        out.close();
     }
 }
