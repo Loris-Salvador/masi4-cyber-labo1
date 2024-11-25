@@ -74,11 +74,11 @@ public class Main {
     private static void startSHA1(int port, String message)
     {
         Hash hash = new SHA1();
-        ServerFeature serverFeature = new SHA1ServerFeature();
+        ServerFeature serverFeature = new HashSHA1ServerFeature();
 
         Server server = new Server(port, serverFeature);
 
-        ClientFeature clientFeature = new SHA1ClientFeature(hash, message);
+        ClientFeature clientFeature = new HashSHA1ClientFeature(hash, message);
 
         Client client = new Client(port, clientFeature);
 
