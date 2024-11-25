@@ -72,7 +72,7 @@ public class Main {
                     startSignSHA1RSA(port, "Hello SHA and RSA");
                     break;
                 case 6:
-                    startRSAKeyStore(port, "Hello World !");
+                    startRSAKeyStore(port, "Hello RSA KeyStore!");
                     break;
                 default:
                     System.out.println("Choix invalide, veuillez entrer un nombre entre 1 et 6.");
