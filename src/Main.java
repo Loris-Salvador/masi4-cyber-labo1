@@ -3,16 +3,12 @@ import algorithms.crypto.CryptoAlgorithm;
 import algorithms.crypto.TripleDES;
 import algorithms.hash.Hash;
 import algorithms.hash.SHA1;
+import algorithms.hmac.HMAC;
+import algorithms.hmac.MD5;
 import client.Client;
-import client.features.AESDiffieHellmanClientFeature;
-import client.features.ClientFeature;
-import client.features.SHA1ClientFeature;
-import client.features.TripleDESClientFeature;
+import client.features.*;
 import server.Server;
-import server.features.AESDiffieHellmanServerFeature;
-import server.features.SHA1ServerFeature;
-import server.features.ServerFeature;
-import server.features.TripleDESServerFeature;
+import server.features.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,6 +38,7 @@ public class Main {
         //startDESHardCodedKey(port, "Hello DES");
         //startAESDiffieHellman(port, "Hello AES");
         //startSHA1(port, "Hello SHA1");
+        //startHMACMD5(port, "Hello HMAC-MD5");
     }
 
     private static void startDESHardCodedKey(int port, String message)
@@ -82,6 +79,21 @@ public class Main {
         Server server = new Server(port, serverFeature);
 
         ClientFeature clientFeature = new SHA1ClientFeature(hash, message);
+
+        Client client = new Client(port, clientFeature);
+
+        server.start();
+        client.start();
+    }
+
+    private static void startHMACMD5(int port, String message)
+    {
+        HMAC hmac = new MD5();
+        ServerFeature serverFeature = new HMACMD5ServerFeature(hmac);
+
+        Server server = new Server(port, serverFeature);
+
+        ClientFeature clientFeature = new HMACMD5ClientFeature(message, hmac);
 
         Client client = new Client(port, clientFeature);
 

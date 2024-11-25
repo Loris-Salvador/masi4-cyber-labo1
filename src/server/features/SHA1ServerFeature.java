@@ -13,7 +13,7 @@ public class SHA1ServerFeature implements ServerFeature {
             String message;
             message = in.readLine();
 
-            System.out.println("Message hashé : " + message);
+            System.out.println("Message hashé reçu : " + message);
 
         } catch (IOException e) {
             System.err.println("Erreur de communication : " + e.getMessage());

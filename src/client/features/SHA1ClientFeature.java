@@ -23,6 +23,8 @@ public class SHA1ClientFeature implements ClientFeature {
     public void execute(Socket serverSocket) throws IOException {
         PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true);
 
+        System.out.println("Message coté Client : " + message);
+
         String hashMessage = hashAlgorithm.hash(message.getBytes());
 
         out.println(hashMessage);
