@@ -39,6 +39,7 @@ public class Main {
         //startAESDiffieHellman(port, "Hello AES");
         //startSHA1(port, "Hello SHA1");
         //startHMACMD5(port, "Hello HMAC-MD5");
+        startSignSHA1RSA(port, "Hello SHA and RSA");
     }
 
     private static void startDESHardCodedKey(int port, String message)
@@ -94,6 +95,21 @@ public class Main {
         Server server = new Server(port, serverFeature);
 
         ClientFeature clientFeature = new HMACMD5ClientFeature(message, hmac);
+
+        Client client = new Client(port, clientFeature);
+
+        server.start();
+        client.start();
+    }
+
+    private static void startSignSHA1RSA(int port, String message)
+    {
+        Hash hash = new SHA1();
+        ServerFeature serverFeature = new SignSHA1RSAServerFeature();
+
+        Server server = new Server(port, serverFeature);
+
+        ClientFeature clientFeature = new SignSHA1RSAClientFeature(hash, message);
 
         Client client = new Client(port, clientFeature);
 
