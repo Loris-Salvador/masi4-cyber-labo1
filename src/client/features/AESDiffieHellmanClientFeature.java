@@ -12,12 +12,13 @@ import java.util.Arrays;
 
 public class AESDiffieHellmanClientFeature implements ClientFeature {
 
-    private final String message = "Hello AES Diffie Hellman :)";
+    private final String message;
 
     private final CryptoAlgorithm cryptoAlgorithm;
 
-    public AESDiffieHellmanClientFeature(CryptoAlgorithm cryptoAlgorithm) {
+    public AESDiffieHellmanClientFeature(CryptoAlgorithm cryptoAlgorithm, String message) {
         this.cryptoAlgorithm = cryptoAlgorithm;
+        this.message = message;
     }
 
     @Override

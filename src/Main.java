@@ -39,19 +39,19 @@ public class Main {
             return;
         }
 
-        //startDESHardCodedKey(port);
-        //startAESDiffieHellman(port);
-        startSHA1(port);
+        //startDESHardCodedKey(port, "Hello DES");
+        //startAESDiffieHellman(port, "Hello AES");
+        //startSHA1(port, "Hello SHA1");
     }
 
-    private static void startDESHardCodedKey(int port)
+    private static void startDESHardCodedKey(int port, String message)
     {
         CryptoAlgorithm cryptoAlgorithm = new TripleDES();
         ServerFeature serverFeature = new TripleDESServerFeature(cryptoAlgorithm);
 
         Server server = new Server(port, serverFeature);
 
-        ClientFeature clientfeature = new TripleDESClientFeature(cryptoAlgorithm);
+        ClientFeature clientfeature = new TripleDESClientFeature(cryptoAlgorithm, message);
 
         Client client = new Client(port, clientfeature);
 
@@ -59,14 +59,14 @@ public class Main {
         client.start();
     }
 
-    private static void startAESDiffieHellman(int port)
+    private static void startAESDiffieHellman(int port, String message)
     {
         CryptoAlgorithm cryptoAlgorithm = new AES();
         ServerFeature serverFeature = new AESDiffieHellmanServerFeature(cryptoAlgorithm);
 
         Server server = new Server(port, serverFeature);
 
-        ClientFeature clientfeature = new AESDiffieHellmanClientFeature(cryptoAlgorithm);
+        ClientFeature clientfeature = new AESDiffieHellmanClientFeature(cryptoAlgorithm, message);
 
         Client client = new Client(port, clientfeature);
 
@@ -74,14 +74,14 @@ public class Main {
         client.start();
     }
 
-    private static void startSHA1(int port)
+    private static void startSHA1(int port, String message)
     {
         Hash hash = new SHA1();
         ServerFeature serverFeature = new SHA1ServerFeature();
 
         Server server = new Server(port, serverFeature);
 
-        ClientFeature clientFeature = new SHA1ClientFeature(hash);
+        ClientFeature clientFeature = new SHA1ClientFeature(hash, message);
 
         Client client = new Client(port, clientFeature);
 

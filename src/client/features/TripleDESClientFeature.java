@@ -11,13 +11,14 @@ public class TripleDESClientFeature implements ClientFeature {
 
     private final String key = "123456789012345678901234";
 
-    private final String message = "Hello DES Hard Coded Keys :)";
+    private final String message;
 
     private final CryptoAlgorithm cryptoAlgorithm;
 
-    public TripleDESClientFeature(CryptoAlgorithm cryptoAlgorithm)
+    public TripleDESClientFeature(CryptoAlgorithm cryptoAlgorithm, String message)
     {
         this.cryptoAlgorithm = cryptoAlgorithm;
+        this.message = message;
     }
 
     @Override
