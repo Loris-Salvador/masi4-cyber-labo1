@@ -21,7 +21,7 @@ public class Server extends Thread {
     public void run() {
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Waiting on port " + port);
+            System.out.println("\nWaiting on port " + port);
 
             Socket clientSocket = serverSocket.accept();
             System.out.println("Connection established with : " + clientSocket.getInetAddress());

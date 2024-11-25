@@ -13,6 +13,7 @@ import server.features.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class Main {
 
@@ -23,98 +24,190 @@ public class Main {
         try {
             FileInputStream inputStream = new FileInputStream("config.properties");
             properties.load(inputStream);
-
             port = Integer.parseInt(properties.getProperty("PORT"));
         } catch (IOException e) {
-            e.setStackTrace(e.getStackTrace());
+            e.printStackTrace();
         }
 
-        if (port == -1)
-        {
+        if (port == -1) {
             System.out.println("Numéro de port incorrect");
             return;
         }
 
-        //startDESHardCodedKey(port, "Hello DES");
-        //startAESDiffieHellman(port, "Hello AES");
-        //startSHA1(port, "Hello SHA1");
-        //startHMACMD5(port, "Hello HMAC-MD5");
-        startSignSHA1RSA(port, "Hello SHA and RSA");
+        Scanner scanner = new Scanner(System.in);
+
+
+        int choice;
+
+        do {
+
+            System.out.println("\nChoisissez une fonctionnalité à lancer :");
+            System.out.println("0 - Quitter");
+            System.out.println("1 - Triple DES");
+            System.out.println("2 - AES Diffie-Hellman");
+            System.out.println("3 - SHA-1");
+            System.out.println("4 - HMAC-MD5");
+            System.out.println("5 - RSA avec Keystore");
+            System.out.println("6 - Signature SHA1 avec RSA");
+            System.out.print("Votre choix : ");
+
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 0:
+                    break;
+                case 1:
+                    startDESHardCodedKey(port, "Hello DES");
+                    break;
+                case 2:
+                    startAESDiffieHellman(port, "Hello AES");
+                    break;
+                case 3:
+                    startSHA1(port, "Hello SHA1");
+                    break;
+                case 4:
+                    startHMACMD5(port, "Hello HMAC-MD5");
+                    break;
+                case 5:
+                    startSignSHA1RSA(port, "Hello SHA and RSA");
+                    break;
+                case 6:
+                    startRSAKeyStore(port, "Hello World !");
+                    break;
+                default:
+                    System.out.println("Choix invalide, veuillez entrer un nombre entre 1 et 6.");
+                    break;
+            }
+        }
+        while (choice != 0);
+
+
+        scanner.close();
     }
 
-    private static void startDESHardCodedKey(int port, String message)
-    {
+    private static void startDESHardCodedKey(int port, String message) {
         CryptoAlgorithm cryptoAlgorithm = new TripleDES();
         ServerFeature serverFeature = new TripleDESServerFeature(cryptoAlgorithm);
 
         Server server = new Server(port, serverFeature);
+        ClientFeature clientFeature = new TripleDESClientFeature(cryptoAlgorithm, message);
 
-        ClientFeature clientfeature = new TripleDESClientFeature(cryptoAlgorithm, message);
-
-        Client client = new Client(port, clientfeature);
+        Client client = new Client(port, clientFeature);
 
         server.start();
         client.start();
+
+        try
+        {
+            server.join();
+            client.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private static void startAESDiffieHellman(int port, String message)
-    {
+    private static void startAESDiffieHellman(int port, String message) {
         CryptoAlgorithm cryptoAlgorithm = new AES();
         ServerFeature serverFeature = new AESDiffieHellmanServerFeature(cryptoAlgorithm);
 
         Server server = new Server(port, serverFeature);
+        ClientFeature clientFeature = new AESDiffieHellmanClientFeature(cryptoAlgorithm, message);
 
-        ClientFeature clientfeature = new AESDiffieHellmanClientFeature(cryptoAlgorithm, message);
-
-        Client client = new Client(port, clientfeature);
+        Client client = new Client(port, clientFeature);
 
         server.start();
         client.start();
+
+        try
+        {
+            server.join();
+            client.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private static void startSHA1(int port, String message)
-    {
+    private static void startSHA1(int port, String message) {
         Hash hash = new SHA1();
         ServerFeature serverFeature = new HashSHA1ServerFeature();
 
         Server server = new Server(port, serverFeature);
-
         ClientFeature clientFeature = new HashSHA1ClientFeature(hash, message);
 
         Client client = new Client(port, clientFeature);
 
         server.start();
         client.start();
+
+        try
+        {
+            server.join();
+            client.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private static void startHMACMD5(int port, String message)
-    {
+    private static void startHMACMD5(int port, String message) {
         HMAC hmac = new MD5();
         ServerFeature serverFeature = new HMACMD5ServerFeature(hmac);
 
         Server server = new Server(port, serverFeature);
-
         ClientFeature clientFeature = new HMACMD5ClientFeature(message, hmac);
 
         Client client = new Client(port, clientFeature);
 
         server.start();
         client.start();
+
+        try
+        {
+            server.join();
+            client.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private static void startSignSHA1RSA(int port, String message)
-    {
+    private static void startRSAKeyStore(int port, String message) {
+        ServerFeature serverFeature = new RSAKeyStoreServerFeature();
+
+        Server server = new Server(port, serverFeature);
+        ClientFeature clientFeature = new RSAKeyStoreClientFeature(message);
+
+        Client client = new Client(port, clientFeature);
+
+        server.start();
+        client.start();
+
+        try
+        {
+            server.join();
+            client.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void startSignSHA1RSA(int port, String message) {
         Hash hash = new SHA1();
         ServerFeature serverFeature = new SignSHA1RSAServerFeature();
 
         Server server = new Server(port, serverFeature);
-
         ClientFeature clientFeature = new SignSHA1RSAClientFeature(hash, message);
 
         Client client = new Client(port, clientFeature);
 
         server.start();
         client.start();
-    }
 
+        try
+        {
+            server.join();
+            client.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
