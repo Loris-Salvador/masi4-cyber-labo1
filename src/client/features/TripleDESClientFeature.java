@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 
-public class TripleDESHardCodedKeys implements Feature {
+public class TripleDESClientFeature implements ClientFeature {
 
     private final String key = "123456789012345678901234";
 
@@ -15,7 +15,7 @@ public class TripleDESHardCodedKeys implements Feature {
 
     private final CryptoAlgorithm cryptoAlgorithm;
 
-    public TripleDESHardCodedKeys(CryptoAlgorithm cryptoAlgorithm)
+    public TripleDESClientFeature(CryptoAlgorithm cryptoAlgorithm)
     {
         this.cryptoAlgorithm = cryptoAlgorithm;
     }

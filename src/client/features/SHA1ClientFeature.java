@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class SHA1 implements Feature {
+public class SHA1ClientFeature implements ClientFeature {
 
     private final String message = "Hello SHA-1 :)";
 
     private final Hash hashAlgorithm;
 
 
-    public SHA1(Hash hashAlgorithm)
+    public SHA1ClientFeature(Hash hashAlgorithm)
     {
         this.hashAlgorithm = hashAlgorithm;
     }

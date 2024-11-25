@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class TripleDESHardCodedKeys implements Feature {
+public class TripleDESServerFeature implements ServerFeature {
 
     private final String key = "123456789012345678901234";
 
     private final CryptoAlgorithm cryptoAlgorithm;
 
-    public TripleDESHardCodedKeys(CryptoAlgorithm cryptoAlgorithm)
+    public TripleDESServerFeature(CryptoAlgorithm cryptoAlgorithm)
     {
         this.cryptoAlgorithm = cryptoAlgorithm;
     }

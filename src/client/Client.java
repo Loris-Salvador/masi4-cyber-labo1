@@ -1,6 +1,6 @@
 package client;
 
-import client.features.Feature;
+import client.features.ClientFeature;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -9,12 +9,12 @@ public class Client extends Thread {
 
     private final int port;
 
-    private final Feature feature;
+    private final ClientFeature clientFeature;
 
-    public Client(int port, Feature feature)
+    public Client(int port, ClientFeature clientFeature)
     {
         this.port = port;
-        this.feature = feature;
+        this.clientFeature = clientFeature;
     }
 
     public void run()
@@ -22,7 +22,7 @@ public class Client extends Thread {
         try {
             Socket serverSocket = new Socket("localhost", port);
 
-            feature.execute(serverSocket);
+            clientFeature.execute(serverSocket);
 
             serverSocket.close();
         } catch (IOException e) {

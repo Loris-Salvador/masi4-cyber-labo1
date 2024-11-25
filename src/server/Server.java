@@ -1,6 +1,6 @@
 package server;
 
-import server.features.Feature;
+import server.features.ServerFeature;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -10,9 +10,9 @@ public class Server extends Thread {
 
     private final int port;
 
-    private final Feature feature;
+    private final ServerFeature feature;
 
-    public Server(int port, Feature feature)
+    public Server(int port, ServerFeature feature)
     {
         this.port = port;
         this.feature = feature;

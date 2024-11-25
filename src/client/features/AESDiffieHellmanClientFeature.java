@@ -10,13 +10,13 @@ import java.net.Socket;
 import java.security.*;
 import java.util.Arrays;
 
-public class AESDiffieHellman implements Feature {
+public class AESDiffieHellmanClientFeature implements ClientFeature {
 
     private final String message = "Hello AES Diffie Hellman :)";
 
     private final CryptoAlgorithm cryptoAlgorithm;
 
-    public AESDiffieHellman(CryptoAlgorithm cryptoAlgorithm) {
+    public AESDiffieHellmanClientFeature(CryptoAlgorithm cryptoAlgorithm) {
         this.cryptoAlgorithm = cryptoAlgorithm;
     }
 

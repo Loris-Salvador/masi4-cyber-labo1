@@ -10,11 +10,11 @@ import java.net.Socket;
 import java.security.*;
 import java.util.Arrays;
 
-public class AESDiffieHellman implements Feature {
+public class AESDiffieHellmanServerFeature implements ServerFeature {
 
     private final CryptoAlgorithm cryptoAlgorithm;
 
-    public AESDiffieHellman(CryptoAlgorithm cryptoAlgorithm) {
+    public AESDiffieHellmanServerFeature(CryptoAlgorithm cryptoAlgorithm) {
         this.cryptoAlgorithm = cryptoAlgorithm;
     }
 

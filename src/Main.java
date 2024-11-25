@@ -4,10 +4,15 @@ import algorithms.crypto.TripleDES;
 import algorithms.hash.Hash;
 import algorithms.hash.SHA1;
 import client.Client;
+import client.features.AESDiffieHellmanClientFeature;
+import client.features.ClientFeature;
+import client.features.SHA1ClientFeature;
+import client.features.TripleDESClientFeature;
 import server.Server;
-import server.features.AESDiffieHellman;
-import server.features.Feature;
-import server.features.TripleDESHardCodedKeys;
+import server.features.AESDiffieHellmanServerFeature;
+import server.features.SHA1ServerFeature;
+import server.features.ServerFeature;
+import server.features.TripleDESServerFeature;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,11 +47,11 @@ public class Main {
     private static void startDESHardCodedKey(int port)
     {
         CryptoAlgorithm cryptoAlgorithm = new TripleDES();
-        Feature serverFeature = new TripleDESHardCodedKeys(cryptoAlgorithm);
+        ServerFeature serverFeature = new TripleDESServerFeature(cryptoAlgorithm);
 
         Server server = new Server(port, serverFeature);
 
-        client.features.Feature clientfeature = new client.features.TripleDESHardCodedKeys(cryptoAlgorithm);
+        ClientFeature clientfeature = new TripleDESClientFeature(cryptoAlgorithm);
 
         Client client = new Client(port, clientfeature);
 
@@ -57,11 +62,11 @@ public class Main {
     private static void startAESDiffieHellman(int port)
     {
         CryptoAlgorithm cryptoAlgorithm = new AES();
-        Feature serverFeature = new AESDiffieHellman(cryptoAlgorithm);
+        ServerFeature serverFeature = new AESDiffieHellmanServerFeature(cryptoAlgorithm);
 
         Server server = new Server(port, serverFeature);
 
-        client.features.Feature clientfeature = new client.features.AESDiffieHellman(cryptoAlgorithm);
+        ClientFeature clientfeature = new AESDiffieHellmanClientFeature(cryptoAlgorithm);
 
         Client client = new Client(port, clientfeature);
 
@@ -72,11 +77,11 @@ public class Main {
     private static void startSHA1(int port)
     {
         Hash hash = new SHA1();
-        Feature serverFeature = new server.features.SHA1();
+        ServerFeature serverFeature = new SHA1ServerFeature();
 
         Server server = new Server(port, serverFeature);
 
-        client.features.Feature clientFeature = new client.features.SHA1(hash);
+        ClientFeature clientFeature = new SHA1ClientFeature(hash);
 
         Client client = new Client(port, clientFeature);
 
