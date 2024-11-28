@@ -12,19 +12,28 @@ import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Base64;
+import java.util.Properties;
 
 public class RSAKeyStoreServerFeature implements ServerFeature {
 
     @Override
     public void execute(Socket clientSocket) throws IOException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+
+            Properties properties = new Properties();
+
+            FileInputStream inputStream = new FileInputStream("passwords.properties");
+            properties.load(inputStream);
+            String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+            String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
+
             String encodedMessage = in.readLine();
 
             KeyStore keystore = KeyStore.getInstance("JKS");
             FileInputStream fis = new FileInputStream("./keystore.jks");
-            keystore.load(fis, "P@ssw0rd".toCharArray());
+            keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey("mykey", "P@ssw0rd".toCharArray());
+            PrivateKey privateKey = (PrivateKey) keystore.getKey("mykey", keyPassword.toCharArray());
 
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);

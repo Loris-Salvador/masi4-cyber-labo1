@@ -5,7 +5,6 @@ import org.json.JSONObject;
 import javax.crypto.Cipher;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.KeyStore;
@@ -15,6 +14,7 @@ import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.Base64;
+import java.util.Properties;
 
 public class AllCryptoPrinciplesClientFeature implements ClientFeature {
 
@@ -29,14 +29,21 @@ public class AllCryptoPrinciplesClientFeature implements ClientFeature {
     public void execute(Socket serverSocket) throws IOException {
 
         try {
+            Properties properties = new Properties();
+
+            FileInputStream inputStream = new FileInputStream("passwords.properties");
+            properties.load(inputStream);
+            String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
+            String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+
             KeyStore keystore = KeyStore.getInstance("JKS");
             FileInputStream fis = new FileInputStream("./keystore.jks");
-            keystore.load(fis, "P@ssw0rd".toCharArray());
+            keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey("clientkey", "P@ssw0rd".toCharArray());
+            PrivateKey privateKey = (PrivateKey) keystore.getKey("clientkey", keyPassword.toCharArray());
 
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            InputStream inputStream = new FileInputStream("./servercert.crt");
+            inputStream = new FileInputStream("./servercert.crt");
             Certificate certificate = certificateFactory.generateCertificate(inputStream);
             inputStream.close();
 

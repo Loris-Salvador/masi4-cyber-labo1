@@ -9,6 +9,7 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.Base64;
+import java.util.Properties;
 
 public class AllCryptoPrinciplesServerFeature implements ServerFeature {
 
@@ -17,18 +18,25 @@ public class AllCryptoPrinciplesServerFeature implements ServerFeature {
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())))
         {
+            Properties properties = new Properties();
+
+            FileInputStream inputStream = new FileInputStream("passwords.properties");
+            properties.load(inputStream);
+            String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
+            String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+
             String inputLine = in.readLine();
 
             JSONObject jsonObject = new JSONObject(inputLine);
 
             KeyStore keystore = KeyStore.getInstance("JKS");
             FileInputStream fis = new FileInputStream("./keystore.jks");
-            keystore.load(fis, "P@ssw0rd".toCharArray());
+            keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey("serverkey", "P@ssw0rd".toCharArray());
+            PrivateKey privateKey = (PrivateKey) keystore.getKey("serverkey", keyPassword.toCharArray());
 
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            InputStream inputStream = new FileInputStream("./clientcert.crt");
+            inputStream = new FileInputStream("./clientcert.crt");
             Certificate certificate = certificateFactory.generateCertificate(inputStream);
             inputStream.close();
 
@@ -46,7 +54,7 @@ public class AllCryptoPrinciplesServerFeature implements ServerFeature {
             byte[] decryptedMessage = decryptCipher.doFinal(encryptedMessage);
             String decryptedMessageStr = new String(decryptedMessage);
 
-            System.out.println("Decrypted messsage : " + decryptedMessageStr);
+            System.out.println("Decrypted message : " + decryptedMessageStr);
 
             Signature signature = Signature.getInstance("SHA1withRSA");
             signature.initVerify(publicKey);
