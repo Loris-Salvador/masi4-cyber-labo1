@@ -31,3 +31,6 @@ bin/
 
 /.idea
 *.iml
+
+# PASSWORDS
+./passwords.properties
