@@ -21,7 +21,7 @@ public class RSAKeyStoreServerFeature implements ServerFeature {
             String encodedMessage = in.readLine();
 
             KeyStore keystore = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream("C:\\Users\\loris\\MASI4-git\\CyberSecurite\\masi4-cyber-labo1\\mykeystore");
+            FileInputStream fis = new FileInputStream("./keystore.jks");
             keystore.load(fis, "P@ssw0rd".toCharArray());
 
             PrivateKey privateKey = (PrivateKey) keystore.getKey("mykey", "P@ssw0rd".toCharArray());

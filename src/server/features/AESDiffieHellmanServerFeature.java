@@ -44,7 +44,7 @@ public class AESDiffieHellmanServerFeature implements ServerFeature {
 
             keyAgreement.doPhase(clientPublicKey, true);
             byte[] sharedSecret = keyAgreement.generateSecret();
-            byte[] aesKey = Arrays.copyOf(sharedSecret, 16); // For AES-128
+            byte[] aesKey = Arrays.copyOf(sharedSecret, 16);
 
             String message = (String) in.readObject();
             System.out.println("Message reçu : " + cryptoAlgorithm.decrypt(message, aesKey));

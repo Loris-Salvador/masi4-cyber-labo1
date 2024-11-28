@@ -49,6 +49,7 @@ public class Main {
             System.out.println("4 - HMAC-MD5");
             System.out.println("5 - RSA avec Keystore");
             System.out.println("6 - Signature SHA1 avec RSA");
+            System.out.println("7 - 4 principes cryptographiques");
             System.out.print("Votre choix : ");
 
             choice = scanner.nextInt();
@@ -73,6 +74,9 @@ public class Main {
                     break;
                 case 6:
                     startRSAKeyStore(port, "Hello RSA KeyStore!");
+                    break;
+                case 7:
+                    startAllCryptoPrinciples(port, "Coucou");
                     break;
                 default:
                     System.out.println("Choix invalide, veuillez entrer un nombre entre 1 et 6.");
@@ -195,6 +199,26 @@ public class Main {
 
         Server server = new Server(port, serverFeature);
         ClientFeature clientFeature = new SignSHA1RSAClientFeature(hash, message);
+
+        Client client = new Client(port, clientFeature);
+
+        server.start();
+        client.start();
+
+        try
+        {
+            server.join();
+            client.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void startAllCryptoPrinciples(int port, String message) {
+        ServerFeature serverFeature = new AllCryptoPrinciplesServerFeature();
+
+        Server server = new Server(port, serverFeature);
+        ClientFeature clientFeature = new AllCryptoPrinciplesClientFeature(message);
 
         Client client = new Client(port, clientFeature);
 
