@@ -54,3 +54,32 @@ Nous utiliserons donc RSA avec Certificats, signature avec cle privée et SHA-1 
 
 - Déni plausible
 Le message est signé avec une clé partagée. Cependant, comme cette clé est connue à la fois du client et du serveur, il devient impossible de prouver de manière irréfutable que le message a été généré par le client. En effet, le serveur, connaissant également la clé partagée, aurait très bien pu fabriquer le message ainsi que sa signature.
+
+---
+
+# Commandes
+
+#### Génération des paires de clé dans le keystore
+
+```bash
+keytool -genkeypair -alias mykey -keyalg RSA -keysize 2048 -keystore.jks -validity 365
+```
+
+```bash
+keytool -genkeypair -alias server -keyalg RSA -keysize 2048 -keystore.jks -validity 365
+```
+
+```bash
+keytool -genkeypair -alias client -keyalg RSA -keysize 2048 -keystore.jks -validity 365
+```
+
+#### Export des Certificats
+
+```bash
+keytool -exportcert -alias server -file server.crt -keystore keystore.jks -rfc
+```
+
+```bash
+keytool -exportcert -alias client -file client.crt -keystore keystore.jks -rfc
+```
+
