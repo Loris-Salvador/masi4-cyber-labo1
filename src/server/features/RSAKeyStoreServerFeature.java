@@ -24,16 +24,20 @@ public class RSAKeyStoreServerFeature implements ServerFeature {
 
             FileInputStream inputStream = new FileInputStream("passwords.properties");
             properties.load(inputStream);
+            inputStream = new FileInputStream("config.properties");
             String keyPassword = properties.getProperty("KEYS_PASSWORDS");
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
+            properties.load(inputStream);
+            String keystorePath = properties.getProperty("KEYSTORE_PATH");
+            String keyAlias = properties.getProperty("RSA_KEYSTORE_FEATURE_ALIAS");
 
             String encodedMessage = in.readLine();
 
             KeyStore keystore = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream("./keystore.jks");
+            FileInputStream fis = new FileInputStream(keystorePath);
             keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey("mykey", keyPassword.toCharArray());
+            PrivateKey privateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
 
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);

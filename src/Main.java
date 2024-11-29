@@ -46,8 +46,8 @@ public class Main {
             System.out.println("2 - AES Diffie-Hellman");
             System.out.println("3 - SHA-1");
             System.out.println("4 - HMAC-MD5");
-            System.out.println("5 - RSA avec Keystore");
-            System.out.println("6 - Signature SHA1 avec RSA");
+            System.out.println("5 - Signature SHA1 avec RSA");
+            System.out.println("6 - RSA avec Keystore");
             System.out.println("7 - 4 principes cryptographiques");
             System.out.println("8 - Dénis plausible");
             System.out.print("Votre choix : ");

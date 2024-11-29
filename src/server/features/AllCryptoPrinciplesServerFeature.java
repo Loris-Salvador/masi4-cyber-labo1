@@ -22,21 +22,26 @@ public class AllCryptoPrinciplesServerFeature implements ServerFeature {
 
             FileInputStream inputStream = new FileInputStream("passwords.properties");
             properties.load(inputStream);
+            inputStream = new FileInputStream("config.properties");
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
             String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+            properties.load(inputStream);
+            String keystorePath = properties.getProperty("KEYSTORE_PATH");
+            String keyAlias = properties.getProperty("KEYSTORE_SERVER_ALIAS");
+            String clientCrtPath = properties.getProperty("CLIENT_CRT_PATH");
 
             String inputLine = in.readLine();
 
             JSONObject jsonObject = new JSONObject(inputLine);
 
             KeyStore keystore = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream("./keystore.jks");
+            FileInputStream fis = new FileInputStream(keystorePath);
             keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey("serverkey", keyPassword.toCharArray());
+            PrivateKey privateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
 
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            inputStream = new FileInputStream("./clientcert.crt");
+            inputStream = new FileInputStream(clientCrtPath);
             Certificate certificate = certificateFactory.generateCertificate(inputStream);
             inputStream.close();
 

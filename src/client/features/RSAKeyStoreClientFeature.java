@@ -29,12 +29,16 @@ public class RSAKeyStoreClientFeature implements ClientFeature {
             FileInputStream inputStream = new FileInputStream("passwords.properties");
             properties.load(inputStream);
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
+            inputStream = new FileInputStream("config.properties");
+            properties.load(inputStream);
+            String keystorePath = properties.getProperty("KEYSTORE_PATH");
+            String keyAlias = properties.getProperty("RSA_KEYSTORE_FEATURE_ALIAS");
 
             KeyStore keystore = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream("./keystore.jks");
+            FileInputStream fis = new FileInputStream(keystorePath);
             keystore.load(fis, keystorePassword.toCharArray());
 
-            Certificate cert = keystore.getCertificate("mykey");
+            Certificate cert = keystore.getCertificate(keyAlias);
             PublicKey publicKey = cert.getPublicKey();
 
             Cipher cipher = Cipher.getInstance("RSA");

@@ -33,17 +33,23 @@ public class AllCryptoPrinciplesClientFeature implements ClientFeature {
 
             FileInputStream inputStream = new FileInputStream("passwords.properties");
             properties.load(inputStream);
+            inputStream = new FileInputStream("config.properties");
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
             String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+            properties.load(inputStream);
+            String keystorePath = properties.getProperty("KEYSTORE_PATH");
+            String keyAlias = properties.getProperty("KEYSTORE_CLIENT_ALIAS");
+            String serverCrtPath = properties.getProperty("SERVER_CRT_PATH");
+
 
             KeyStore keystore = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream("./keystore.jks");
+            FileInputStream fis = new FileInputStream(keystorePath);
             keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey("clientkey", keyPassword.toCharArray());
+            PrivateKey privateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
 
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            inputStream = new FileInputStream("./servercert.crt");
+            inputStream = new FileInputStream(serverCrtPath);
             Certificate certificate = certificateFactory.generateCertificate(inputStream);
             inputStream.close();
 
