@@ -23,9 +23,9 @@ public class HashSHA1ClientFeature implements ClientFeature {
     public void execute(Socket serverSocket) throws IOException {
         PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true);
 
-        System.out.println("Message coté Client : " + message);
-
         String hashMessage = hashAlgorithm.hash(message.getBytes());
+
+        System.out.println("CLIENT : Message before hash: " + message);
 
         out.println(hashMessage);
 

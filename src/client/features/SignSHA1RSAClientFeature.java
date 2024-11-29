@@ -1,6 +1,7 @@
 package client.features;
 
 import algorithms.hash.Hash;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,7 +29,13 @@ public class SignSHA1RSAClientFeature implements ClientFeature {
 
             String signature = sign(message, getPrivateKey());
 
-            out.println(message + "|" + signature);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", message);
+            jsonObject.put("signature", signature);
+
+            System.out.println("CLIENT : Message : " + jsonObject);
+
+            out.println(jsonObject);
         }
         catch (Exception e) {
             throw new RuntimeException(e);

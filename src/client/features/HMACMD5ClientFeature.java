@@ -1,6 +1,7 @@
 package client.features;
 
 import algorithms.hmac.HMAC;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,15 +29,16 @@ public class HMACMD5ClientFeature implements ClientFeature {
         {
             PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true);
 
-            String messageHmac = hmac.calculate(message, key.getBytes());
+            String signatureHMAC = hmac.calculate(message, key.getBytes());
 
-            System.out.println("Message coté Client : " + message);
 
-            System.out.println("HMAC coté client : " + messageHmac);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", message);
+            jsonObject.put("signature", signatureHMAC);
 
-            message = message + "|" + messageHmac;
+            System.out.println("CLIENT : Message : " + jsonObject);
 
-            out.println(message);
+            out.println(jsonObject);
 
             out.close();
         }

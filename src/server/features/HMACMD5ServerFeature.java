@@ -1,6 +1,7 @@
 package server.features;
 
 import algorithms.hmac.HMAC;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,19 +25,25 @@ public class HMACMD5ServerFeature implements ServerFeature {
     public void execute(Socket clientSocket) throws IOException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())))
         {
-            String combinedMessage;
-            combinedMessage = in.readLine();
+            String inputLine;
+            inputLine = in.readLine();
 
-            String[] parts = combinedMessage.split("\\|"); // Split the message and HMAC
-            String message = parts[0];
-            String receivedHMAC = parts[1];
+            JSONObject jsonObject = new JSONObject(inputLine);
+            String message = jsonObject.getString("message");
+            String signature = jsonObject.getString("signature");
 
-            System.out.println("Message Reçu : " + message);
-            System.out.println("HMAC recalculé coté server : " + hmac.calculate(message, key.getBytes()));
+            String HMACRecalculate = hmac.calculate(message, key.getBytes());
+
+            System.out.println("SERVER : HMAC recalculate : " + HMACRecalculate);
+
+            if(HMACRecalculate.equals(signature))
+                System.out.println("SERVER : HMAC recalculate OK");
+            else
+                System.out.println("SERVER : HMAC recalculate FAIL");
 
 
         } catch (IOException | NoSuchAlgorithmException | InvalidKeyException e) {
-            System.err.println("Erreur de communication : " + e.getMessage());
+            System.err.println("SERVER : Error : " + e.getMessage());
         }
     }
 }

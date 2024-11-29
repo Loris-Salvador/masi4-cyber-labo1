@@ -29,14 +29,15 @@ public class RSAKeyStoreClientFeature implements ClientFeature {
             FileInputStream inputStream = new FileInputStream("passwords.properties");
             properties.load(inputStream);
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
+
             inputStream = new FileInputStream("config.properties");
             properties.load(inputStream);
             String keystorePath = properties.getProperty("KEYSTORE_PATH");
             String keyAlias = properties.getProperty("RSA_KEYSTORE_FEATURE_ALIAS");
 
             KeyStore keystore = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream(keystorePath);
-            keystore.load(fis, keystorePassword.toCharArray());
+            inputStream = new FileInputStream(keystorePath);
+            keystore.load(inputStream, keystorePassword.toCharArray());
 
             Certificate cert = keystore.getCertificate(keyAlias);
             PublicKey publicKey = cert.getPublicKey();
@@ -46,6 +47,8 @@ public class RSAKeyStoreClientFeature implements ClientFeature {
 
             byte[] encryptedMessage = cipher.doFinal(message.getBytes());
             String encodedMessage = Base64.getEncoder().encodeToString(encryptedMessage);
+
+            System.out.println("CLIENT : Message before encryption : " + message);
 
             out.println(encodedMessage);
         } catch (Exception e) {

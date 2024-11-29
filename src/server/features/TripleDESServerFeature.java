@@ -28,10 +28,10 @@ public class TripleDESServerFeature implements ServerFeature {
 
             String decryptedMessage = cryptoAlgorithm.decrypt(message, key.getBytes());
 
-            System.out.println("Message décrypté : " + decryptedMessage);
+            System.out.println("SERVER : Decrypted message : " + decryptedMessage);
 
         } catch (IOException e) {
-            System.err.println("Erreur de communication : " + e.getMessage());
+            System.err.println("SERVER : Error : " + e.getMessage());
         }
     }
 }

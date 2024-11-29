@@ -32,20 +32,19 @@ public class RepudiationServerFeature implements ServerFeature {
     public void execute(Socket clientSocket) throws IOException {
 
         try (ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+             BufferedReader inLine = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()))
         {
-            BufferedReader inLine = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             Properties properties = new Properties();
 
             FileInputStream inputStream = new FileInputStream("passwords.properties");
             properties.load(inputStream);
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
-            String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+
             inputStream = new FileInputStream("config.properties");
             properties.load(inputStream);
             String keystorePath = properties.getProperty("KEYSTORE_PATH");
-            String keyAlias = properties.getProperty("KEYSTORE_SERVER_ALIAS");
             String clientCrtPath = properties.getProperty("CLIENT_CRT_PATH");
 
 
@@ -53,34 +52,38 @@ public class RepudiationServerFeature implements ServerFeature {
             FileInputStream fis = new FileInputStream(keystorePath);
             keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
 
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             inputStream = new FileInputStream(clientCrtPath);
             Certificate certificate = certificateFactory.generateCertificate(inputStream);
             inputStream.close();
 
-            PublicKey publicKey = certificate.getPublicKey();
-
+            PublicKey clientPublicKey = certificate.getPublicKey();
 
             String inputLine = inLine.readLine();
 
             JSONObject jsonObject = new JSONObject(inputLine);
+
+            System.out.println("SERVER : DIFFIE HELLMAN parameters received");
 
             BigInteger p = jsonObject.getBigInteger("p");
             BigInteger g = jsonObject.getBigInteger("g");
             String signatureString = jsonObject.getString("signature");
 
             Signature signature = Signature.getInstance("SHA1withRSA");
-            signature.initVerify(publicKey);
+            signature.initVerify(clientPublicKey);
             signature.update(p.toString().getBytes());
             signature.update(g.toString().getBytes());
             boolean isVerified = signature.verify(Base64.getDecoder().decode(signatureString));
 
             if(!isVerified)
             {
-                System.out.println("Signature verification failed");
+                System.out.println("SERVER : Signature verification failed");
                 System.exit(1);
+            }
+            else
+            {
+                System.out.println("SERVER : Signature verification for Diffie Hellman param OK");
             }
 
             DHParameterSpec dhParamSpec = new DHParameterSpec(p, g);
@@ -94,11 +97,17 @@ public class RepudiationServerFeature implements ServerFeature {
 
             out.writeObject(clientKeyPair.getPublic());
 
+            System.out.println("SERVER : Public value send");
+
+
             PublicKey serverPublicKey = (PublicKey) in.readObject();
+
+            System.out.println("SERVER : Client public value received");
+
 
             keyAgreement.doPhase(serverPublicKey, true);
             byte[] sharedSecret = keyAgreement.generateSecret();
-            byte[] symKey = Arrays.copyOf(sharedSecret, 16); // For AES-128
+            byte[] symKey = Arrays.copyOf(sharedSecret, 16);
 
             String json = inLine.readLine();
 
@@ -111,12 +120,14 @@ public class RepudiationServerFeature implements ServerFeature {
 
             signatureString = hmac.calculate(decryptedMessage, symKey);
 
-            if(!Objects.equals(signatureString, base64Signature))
-                System.out.println("Signature echouée");
-            else
-                System.out.println("Signature OK");
+            System.out.println("SERVER : Decrypted message : " + decryptedMessage);
 
-            System.out.println("Message Dechiffré : " + decryptedMessage);
+
+            if(!Objects.equals(signatureString, base64Signature))
+                System.out.println("SERVER : Signature Failed");
+            else
+                System.out.println("SERVER : Signature OK");
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

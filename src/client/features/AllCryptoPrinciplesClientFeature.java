@@ -33,34 +33,34 @@ public class AllCryptoPrinciplesClientFeature implements ClientFeature {
 
             FileInputStream inputStream = new FileInputStream("passwords.properties");
             properties.load(inputStream);
-            inputStream = new FileInputStream("config.properties");
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
             String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+
+            inputStream = new FileInputStream("config.properties");
             properties.load(inputStream);
             String keystorePath = properties.getProperty("KEYSTORE_PATH");
             String keyAlias = properties.getProperty("KEYSTORE_CLIENT_ALIAS");
             String serverCrtPath = properties.getProperty("SERVER_CRT_PATH");
 
-
             KeyStore keystore = KeyStore.getInstance("JKS");
             FileInputStream fis = new FileInputStream(keystorePath);
             keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
+            PrivateKey clientPrivateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
 
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             inputStream = new FileInputStream(serverCrtPath);
             Certificate certificate = certificateFactory.generateCertificate(inputStream);
             inputStream.close();
 
-            PublicKey publicKey = certificate.getPublicKey();
+            PublicKey serverPublicKey = certificate.getPublicKey();
 
             Cipher encryptCipher = Cipher.getInstance("RSA");
-            encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            encryptCipher.init(Cipher.ENCRYPT_MODE, serverPublicKey);
             byte[] encryptedMessage = encryptCipher.doFinal(message.getBytes());
 
             Signature signature = Signature.getInstance("SHA1withRSA");
-            signature.initSign(privateKey);
+            signature.initSign(clientPrivateKey);
             signature.update(message.getBytes());
             byte[] digitalSignature = signature.sign();
 
@@ -72,6 +72,10 @@ public class AllCryptoPrinciplesClientFeature implements ClientFeature {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", base64EncryptedMessage);
             jsonObject.put("signature", base64Signature);
+
+            System.out.println("CLIENT : Message before encryption : " + message);
+
+            System.out.println("CLIENT : Message send : " + jsonObject);
 
             out.println(jsonObject);
         }

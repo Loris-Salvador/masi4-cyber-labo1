@@ -26,8 +26,6 @@ public class AESDiffieHellmanClientFeature implements ClientFeature {
         try (ObjectOutputStream out = new ObjectOutputStream(serverSocket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream())) {
 
-            System.out.println("Message coté Client : " + message);
-
             BigInteger p = (BigInteger) in.readObject();
             BigInteger g = (BigInteger) in.readObject();
 
@@ -48,9 +46,11 @@ public class AESDiffieHellmanClientFeature implements ClientFeature {
             byte[] sharedSecret = keyAgreement.generateSecret();
             byte[] aesKey = Arrays.copyOf(sharedSecret, 16); // For AES-128
 
+            System.out.println("CLIENT : Message before encryption : " + message);
+
             String encryptedMessage = cryptoAlgorithm.encrypt(message, aesKey);
 
-            System.out.println("Message chiffré coté Client : " + encryptedMessage);
+            System.out.println("CLIENT : Message after encryption : " + encryptedMessage);
 
             out.writeObject(encryptedMessage);
 

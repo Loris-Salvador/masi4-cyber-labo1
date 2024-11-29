@@ -26,11 +26,11 @@ public class TripleDESClientFeature implements ClientFeature {
 
         PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true);
 
-        System.out.println("Message coté Client : " + message);
+        System.out.println("CLIENT : Message before encryption : " + message);
 
         String encryptedMessage = cryptoAlgorithm.encrypt(message, key.getBytes());
 
-        System.out.println("Message chiffré Client : " + encryptedMessage);
+        System.out.println("CLIENT : Message after encryption : " + encryptedMessage);
 
         out.println(encryptedMessage);
 

@@ -32,7 +32,8 @@ public class RepudiationClientFeature implements ClientFeature{
     @Override
     public void execute(Socket serverSocket) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(serverSocket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream()))
+             ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream());
+            PrintWriter outLine = new PrintWriter(serverSocket.getOutputStream(), true))
         {
             Properties properties = new Properties();
 
@@ -40,6 +41,8 @@ public class RepudiationClientFeature implements ClientFeature{
             properties.load(inputStream);
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
             String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+
+
             inputStream = new FileInputStream("config.properties");
             properties.load(inputStream);
             String keystorePath = properties.getProperty("KEYSTORE_PATH");
@@ -49,14 +52,15 @@ public class RepudiationClientFeature implements ClientFeature{
             FileInputStream fis = new FileInputStream(keystorePath);
             keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
 
             BigInteger p = BigInteger.probablePrime(2048, new SecureRandom());
             BigInteger g = BigInteger.valueOf(2);
 
 
+            PrivateKey clientPrivateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
+
             Signature signature = Signature.getInstance("SHA1withRSA");
-            signature.initSign(privateKey);
+            signature.initSign(clientPrivateKey);
             signature.update(p.toString().getBytes());
             signature.update(g.toString().getBytes());
             byte[] digitalSignature = signature.sign();
@@ -67,36 +71,43 @@ public class RepudiationClientFeature implements ClientFeature{
             jsonObjectDH.put("g", g);
             jsonObjectDH.put("signature", Base64.getEncoder().encodeToString(digitalSignature));
 
-            PrintWriter outLine = new PrintWriter(serverSocket.getOutputStream(), true);
+            System.out.println("CLIENT : DIFFIE HELLMAN parameters send");
 
             outLine.println(jsonObjectDH);
+
+            PublicKey serverPublicValue = (PublicKey) in.readObject();
+
+            System.out.println("CLIENT : Public value for DIFFIE HELLMAN received");
+
 
             DHParameterSpec dhParamSpec = new DHParameterSpec(p, g);
 
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("DH");
             keyPairGenerator.initialize(dhParamSpec);
-            KeyPair serverKeyPair = keyPairGenerator.generateKeyPair();
+            KeyPair clientKeyPair = keyPairGenerator.generateKeyPair();
 
             KeyAgreement keyAgreement = KeyAgreement.getInstance("DH");
-            keyAgreement.init(serverKeyPair.getPrivate());
+            keyAgreement.init(clientKeyPair.getPrivate());
 
-            out.writeObject(serverKeyPair.getPublic());
+            System.out.println("CLIENT : Public value for DIFFIE HELLMAN send");
 
-            PublicKey clientPublicKey = (PublicKey) in.readObject();
+            out.writeObject(clientKeyPair.getPublic());
 
-            keyAgreement.doPhase(clientPublicKey, true);
+            keyAgreement.doPhase(serverPublicValue, true);
             byte[] sharedSecret = keyAgreement.generateSecret();
-            byte[] symKey = Arrays.copyOf(sharedSecret, 16);
+            byte[] symKeyAES = Arrays.copyOf(sharedSecret, 16);
 
-            String encryptedMessage = cryptoAlgorithm.encrypt(message, symKey);
+            String encryptedMessage = cryptoAlgorithm.encrypt(message, symKeyAES);
 
-            String signatureMessage = hmac.calculate(message, symKey);
+            String signatureMessage = hmac.calculate(message, symKeyAES);
 
             JSONObject jsonObjectMessage = new JSONObject();
             jsonObjectMessage.put("message", encryptedMessage);
             jsonObjectMessage.put("signature", signatureMessage);
 
-            System.out.println("Message chiffré coté Client : " + jsonObjectMessage);
+            System.out.println("CLIENT : Message before encryption : " + message);
+
+            System.out.println("CLIENT : Message send : " + jsonObjectMessage);
 
             outLine.println(jsonObjectMessage);
         }

@@ -47,7 +47,7 @@ public class AESDiffieHellmanServerFeature implements ServerFeature {
             byte[] aesKey = Arrays.copyOf(sharedSecret, 16);
 
             String message = (String) in.readObject();
-            System.out.println("Message reçu : " + cryptoAlgorithm.decrypt(message, aesKey));
+            System.out.println("SERVER : Decrypted message : " + cryptoAlgorithm.decrypt(message, aesKey));
 
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException |
                  ClassNotFoundException e) {

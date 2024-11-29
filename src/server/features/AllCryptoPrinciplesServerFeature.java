@@ -22,9 +22,10 @@ public class AllCryptoPrinciplesServerFeature implements ServerFeature {
 
             FileInputStream inputStream = new FileInputStream("passwords.properties");
             properties.load(inputStream);
-            inputStream = new FileInputStream("config.properties");
             String keystorePassword = properties.getProperty("KEYSTORE_PASSWORD");
             String keyPassword = properties.getProperty("KEYS_PASSWORDS");
+
+            inputStream = new FileInputStream("config.properties");
             properties.load(inputStream);
             String keystorePath = properties.getProperty("KEYSTORE_PATH");
             String keyAlias = properties.getProperty("KEYSTORE_SERVER_ALIAS");
@@ -38,14 +39,14 @@ public class AllCryptoPrinciplesServerFeature implements ServerFeature {
             FileInputStream fis = new FileInputStream(keystorePath);
             keystore.load(fis, keystorePassword.toCharArray());
 
-            PrivateKey privateKey = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
+            PrivateKey serverPrivateKEy = (PrivateKey) keystore.getKey(keyAlias, keyPassword.toCharArray());
 
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             inputStream = new FileInputStream(clientCrtPath);
             Certificate certificate = certificateFactory.generateCertificate(inputStream);
             inputStream.close();
 
-            PublicKey publicKey = certificate.getPublicKey();
+            PublicKey clientPublicKey = certificate.getPublicKey();
 
             String base64EncryptedMessage = jsonObject.getString("message");
             String base64Signature = jsonObject.getString("signature");
@@ -55,18 +56,22 @@ public class AllCryptoPrinciplesServerFeature implements ServerFeature {
 
 
             Cipher decryptCipher = Cipher.getInstance("RSA");
-            decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
+            decryptCipher.init(Cipher.DECRYPT_MODE, serverPrivateKEy);
             byte[] decryptedMessage = decryptCipher.doFinal(encryptedMessage);
             String decryptedMessageStr = new String(decryptedMessage);
 
-            System.out.println("Decrypted message : " + decryptedMessageStr);
+            System.out.println("SERVER : Decrypted message : " + decryptedMessageStr);
 
             Signature signature = Signature.getInstance("SHA1withRSA");
-            signature.initVerify(publicKey);
+            signature.initVerify(clientPublicKey);
             signature.update(decryptedMessage);
             boolean isVerified = signature.verify(digitalSignature);
 
-            System.out.println("Signature verified : " + isVerified);
+            if(isVerified)
+                System.out.println("SERVER : SIGNATURE OK");
+            else
+                System.out.println("SERVER : SIGNATURE FAILED");
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

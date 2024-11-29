@@ -1,11 +1,12 @@
 package server.features;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
@@ -20,16 +21,18 @@ public class SignSHA1RSAServerFeature implements ServerFeature {
 
             String data = in.readLine();
 
-            String[] parts = data.split("\\|"); // Split the message and HMAC
-            String message = parts[0];
-            String signature = parts[1];
+            JSONObject jsonObject = new JSONObject(data);
+            String message = jsonObject.getString("message");
+            String signature = jsonObject.getString("signature");
 
             boolean isVerified = verify(message, signature, getPublicKey());
-            System.out.println("Signature vérifiée: " + isVerified);
 
-        } catch (IOException e) {
-            System.err.println("Erreur de communication : " + e.getMessage());
-        } catch (Exception e) {
+            if(isVerified)
+                System.out.println("SERVER : VERIFICATION OK");
+            else
+                System.out.println("SERVER : VERIFICATION FAILED");
+
+        }catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

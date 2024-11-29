@@ -13,10 +13,10 @@ public class HashSHA1ServerFeature implements ServerFeature {
             String message;
             message = in.readLine();
 
-            System.out.println("Message hashé reçu : " + message);
+            System.out.println("SERVER : Hash message received : " + message);
 
         } catch (IOException e) {
-            System.err.println("Erreur de communication : " + e.getMessage());
+            System.err.println("SERVER : Error : " + e.getMessage());
         }
     }
 }
