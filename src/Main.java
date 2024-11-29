@@ -36,12 +36,11 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-
         int choice;
 
         do {
 
-            System.out.println("\nChoisissez une fonctionnalité à lancer :");
+            System.out.println("\nChoisissez une fonctionnalité a lancer :");
             System.out.println("0 - Quitter");
             System.out.println("1 - Triple DES");
             System.out.println("2 - AES Diffie-Hellman");
@@ -50,6 +49,7 @@ public class Main {
             System.out.println("5 - RSA avec Keystore");
             System.out.println("6 - Signature SHA1 avec RSA");
             System.out.println("7 - 4 principes cryptographiques");
+            System.out.println("8 - Dénis plausible");
             System.out.print("Votre choix : ");
 
             choice = scanner.nextInt();
@@ -78,8 +78,11 @@ public class Main {
                 case 7:
                     startAllCryptoPrinciples(port, "Coucou");
                     break;
+                case 8:
+                    startRepudiation(port, "Coucou");
+                    break;
                 default:
-                    System.out.println("Choix invalide, veuillez entrer un nombre entre 1 et 6.");
+                    System.out.println("Choix invalide, veuillez entrer un nombre entre 1 et 8.");
                     break;
             }
         }
@@ -219,6 +222,30 @@ public class Main {
 
         Server server = new Server(port, serverFeature);
         ClientFeature clientFeature = new AllCryptoPrinciplesClientFeature(message);
+
+        Client client = new Client(port, clientFeature);
+
+        server.start();
+        client.start();
+
+        try
+        {
+            server.join();
+            client.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private static void startRepudiation(int port, String message) {
+        HMAC hmac = new MD5();
+        CryptoAlgorithm cryptoAlgorithm = new AES();
+
+        ServerFeature serverFeature = new RepudiationServerFeature(hmac, cryptoAlgorithm);
+
+        Server server = new Server(port, serverFeature);
+        ClientFeature clientFeature = new RepudiationClientFeature(message, cryptoAlgorithm, hmac);
 
         Client client = new Client(port, clientFeature);
 
