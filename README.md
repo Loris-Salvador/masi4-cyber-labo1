@@ -37,22 +37,22 @@ Nous utilisons RSA avec des certificats et une signature RSA/SHA-1.
 
 ## Bonus : Laisser le déni plausible
 
-Pour cela, nous devons signer avec une clé partagée. Cette clé sera générée grâce à l'algorithme de Diffie-Hellman et signée par la clé privée, afin de garantir l'authentification.
+Pour cela, nous devons signer avec une clé partagée. Cette clé sera générée grâce à l'algorithme de Diffie-Hellman qui lui meme sera vérifié par signature afin de garantir l'authentification.
 
-Nous utiliserons donc RSA avec Certificats, signature avec cle privée et SHA-1 ainsi que HMAC avec MD5, Diffie-Hellman et AES
+Nous utiliserons donc RSA avec Certificats, signature avec cle privée et SHA-1 pour les paramètres Diffie Hellman ainsi que HMAC avec MD5 pour le message final. AES sera utilisé pour le chiffrement du message final
 
 - Authentification :
 
   - Le serveur utilise un certificat pour prouver son identité (le client sait à qui il envoie les données).
-  - Le client signe avec sa clé privée, ce qui permet au serveur de vérifier que le message provient bien du client.
+  - Le client signe avec sa clé privée lors de l'échange DH, ce qui permet au serveur de vérifier que le message provient bien du client.
 
 - Confidentialité :
 
-    - Les messages sont chiffrés avec l'algorithme symétrique AES, utilisant la clé partagée générée via Diffie-Hellman.
+    - Le message est chiffré avec l'algorithme symétrique AES, utilisant la clé partagée générée via Diffie-Hellman.
 
-- Intégrité : Une signature HMAC est utilisée pour garantir que les messages n'ont pas été altérés.
+- Intégrité : Une signature HMAC est utilisée pour garantir que le message n'a pas été altérés.
 
-- Déni plausible
+- Déni plausible :
 Le message est signé avec une clé partagée. Cependant, comme cette clé est connue à la fois du client et du serveur, il devient impossible de prouver de manière irréfutable que le message a été généré par le client. En effet, le serveur, connaissant également la clé partagée, aurait très bien pu fabriquer le message ainsi que sa signature.
 
 ---
