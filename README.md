@@ -24,6 +24,8 @@ KEYS_PASSWORDS=
 ```
 Étant dans un projet de cyber sécurité ce fichier a juste pour but de montrer les bonnes pratiques à savoir de ne pas mettre les passwords directement sur le git. Cependant, nous utiliserons `P@ssw0rd` dans les deux cas car nous n'exposons absolument aucune données sensibles et nous voulons faciliter le développement par équipe
 
+- Ajouter la dépendance vers la librairie json qui se trouve dans le dossier `/dependancies` à la racine
+
 ---
 
 ## Application regroupant les 4 principes cryptographiques
