@@ -14,9 +14,11 @@ public class MD5 implements HMAC{
         mac.init(secretKeySpec);
         byte[] hmacBytes = mac.doFinal(message.getBytes());
         StringBuilder hmac = new StringBuilder();
+
         for (byte b : hmacBytes) {
             hmac.append(String.format("%02x", b));
         }
+
         return hmac.toString();
     }
 }
