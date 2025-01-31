@@ -64,15 +64,15 @@ Le message est signé avec une clé partagée. Cependant, comme cette clé est c
 #### Génération des paires de clé dans le keystore
 
 ```bash
-keytool -genkeypair -alias mykey -keyalg RSA -keysize 2048 -keystore.jks -validity 365
+keytool -genkeypair -alias mykey -keyalg RSA -keysize 2048 -keystore keystore.jks -validity 365
 ```
 
 ```bash
-keytool -genkeypair -alias server -keyalg RSA -keysize 2048 -keystore.jks -validity 365
+keytool -genkeypair -alias server -keyalg RSA -keysize 2048 -keystore keystore.jks -validity 365
 ```
 
 ```bash
-keytool -genkeypair -alias client -keyalg RSA -keysize 2048 -keystore.jks -validity 365
+keytool -genkeypair -alias client -keyalg RSA -keysize 2048 -vkeystore keystore.jks -validity 365
 ```
 
 #### Export des Certificats
